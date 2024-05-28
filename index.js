@@ -41,14 +41,63 @@ app.use(bodyParser.urlencoded({ extended: true }));
 //Write your code here//
 
 //CHALLENGE 1: GET All posts
+//"/posts"要從server文件中確認
+app.get("/posts",(req,res)=>{
+  //轉成JS可讀取之格式
+  res.json(posts);
+})
 
 //CHALLENGE 2: GET a specific post by id
+app.get("/posts/:id",(req,res)=>{
+  //尋找特定資料用find(),判斷有分嚴謹(===,要完全相同),(==,不一定要完全相同),
+  const id = parseInt(req.params.id);
+  const findPost = posts.find((posts) => posts.id === id);
+  //要加入若沒有尋找到特定資料時,該顯示什麼
+  if (!findPost) return res.status(404).json({ message: "Post not found" });
+  res.json(findPost);
+})
 
 //CHALLENGE 3: POST a new post
+app.post("posts",(req,res)=>{
+  //const newID = posts.length + 1;不可以用length,可能中間的ID被刪除，用length會有id重複的狀況
+  const newID = lastId += 1;
+  const newPost = {
+    id: newID,
+    title: req.body.title,
+    content:req.body.content,
+    author:req.body.author ,
+    date:req.body.date,
+  }
+  posts.push(newPost);
+  lastId = newID;
+  //status(201)表created成功
+  res.status(201).json(newPost);
+
+})
 
 //CHALLENGE 4: PATCH a post when you just want to update one parameter
+app.patch("/posts/:id",(req,res)=>{
+  //前面跟GET a specific post by id相同
+  const findPost = posts.find((posts)=>posts.id === parseInt(req.params.id));
+  if (!findPost) return res.status(404).json({ message: "Post not found" });
+  //判斷是否有輸入資,若有則更新findPost的資料
+  if (req.body.title) findPost.title = req.body.title;
+  if (req.body.content) findPost.content = req.body.content;
+  if (req.body.author) findPost.author = req.body.author;
+
+  res.json(findPost);
+})
 
 //CHALLENGE 5: DELETE a specific post by providing the post id.
+app.delete("/posts/delete/:id",(req,res)=>{
+  //找要刪除的index,再利用splice刪除，findIndex若沒有找到會輸出-1，以此判斷是否有找到post
+  const postIndex = posts.findIndex((posts)=>posts.id === parseInt(req.params.id));
+  if (postIndex===-1) return res.status(404).json({ message: "Post not found" });
+
+  posts.splice(postIndex, 1);
+  res.json({ message: "Post deleted" });
+
+})
 
 app.listen(port, () => {
   console.log(`API is running at http://localhost:${port}`);
