@@ -8,7 +8,7 @@ API practice(GET, POST, PATCH, DELETE)
 4. .push()與.splice() 要記得
 
 git注意:
-1.初期建置沒什麼問題
-2.在使用git push origin main/master前，要先使用git log確定commit碼後面的資訊
+1. 初期建置沒什麼問題
+2. 在使用git push origin main/master前，要先使用git log確定commit碼後面的資訊
   (HEAD:main/master) => git push origin HEAD:main/master
   (origin/main/master) => git push origin main/master
