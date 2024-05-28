@@ -45,7 +45,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.get("/posts",(req,res)=>{
   //轉成JS可讀取之格式
   res.json(posts);
-})
+});
 
 //CHALLENGE 2: GET a specific post by id
 app.get("/posts/:id",(req,res)=>{
@@ -58,7 +58,7 @@ app.get("/posts/:id",(req,res)=>{
 })
 
 //CHALLENGE 3: POST a new post
-app.post("posts",(req,res)=>{
+app.post("/posts",(req,res)=>{
   //const newID = posts.length + 1;不可以用length,可能中間的ID被刪除，用length會有id重複的狀況
   const newID = lastId += 1;
   const newPost = {
@@ -66,14 +66,16 @@ app.post("posts",(req,res)=>{
     title: req.body.title,
     content:req.body.content,
     author:req.body.author ,
-    date:req.body.date,
-  }
-  posts.push(newPost);
+    date:new Date(),
+  };
+  
   lastId = newID;
+  posts.push(newPost);
+  console.log(newPost);
   //status(201)表created成功
   res.status(201).json(newPost);
 
-})
+});
 
 //CHALLENGE 4: PATCH a post when you just want to update one parameter
 app.patch("/posts/:id",(req,res)=>{
@@ -86,18 +88,18 @@ app.patch("/posts/:id",(req,res)=>{
   if (req.body.author) findPost.author = req.body.author;
 
   res.json(findPost);
-})
+});
 
 //CHALLENGE 5: DELETE a specific post by providing the post id.
-app.delete("/posts/delete/:id",(req,res)=>{
+app.delete("/posts/:id",(req,res)=>{
   //找要刪除的index,再利用splice刪除，findIndex若沒有找到會輸出-1，以此判斷是否有找到post
   const postIndex = posts.findIndex((posts)=>posts.id === parseInt(req.params.id));
-  if (postIndex===-1) return res.status(404).json({ message: "Post not found" });
+  if (postIndex === -1) return res.status(404).json({ message: "Post not found" });
 
   posts.splice(postIndex, 1);
   res.json({ message: "Post deleted" });
 
-})
+});
 
 app.listen(port, () => {
   console.log(`API is running at http://localhost:${port}`);
